@@ -40,6 +40,7 @@
 				tweener_mps.addChild( progress );
 				
 				mpscontainer.addChild( tweener_mps );
+				
 				mps.mediaPlayer.addEventListener( TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChange );
 			}
 			private function trackClick(event:MouseEvent):void
