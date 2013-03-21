@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   maxHeight="100" maxWidth="150" 
+			   backgroundColor="#000000"
+			   applicationComplete="initplayer()">
+	<fx:Script>
+		<![CDATA[
+			import caurina.transitions.Tweener;
+			import org.osmf.events.TimeEvent;
+			import org.osmf.media.MediaPlayerSprite;
+			import org.osmf.media.URLResource;
+			
+			private var mps:MediaPlayerSprite;
+			private var tweener_mps:Sprite;
+			private var track:Sprite;
+			private var progress:Sprite;
+			
+			private function initplayer():void
+			{
+				mps = new MediaPlayerSprite();
+				tweener_mps = new Sprite();
+				mps.resource = new URLResource("rtmp://cp67126.edgefcs.net/ondemand/mp4:mediapm/ovp/content/demo/video/elephants_dream/elephants_dream_768x428_24.0fps_408kbps.mp4");							
+//				mpscontainer.addEventListener( MouseEvent.CLICK, onClick);
+				tweener_mps.addChild( mps );
+				tweener_mps.y = 150;
+				
+				track = new Sprite();
+				track.addEventListener(MouseEvent.CLICK, trackClick);
+				track.graphics.beginFill(0x000000, 0.6);
+				track.graphics.drawRect(0, 400, 780, 40);
+				track.graphics.endFill();
+				tweener_mps.addChild( track );
+				
+				progress = new Sprite();
+				progress.graphics.beginFill(0xFFFFFF, 0.6);
+				progress.graphics.drawRect(0, 400, 780, 40);
+				progress.graphics.endFill();
+				tweener_mps.addChild( progress );
+				
+				mpscontainer.addChild( tweener_mps );
+				mps.mediaPlayer.addEventListener( TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChange );
+			}
+			private function trackClick(event:MouseEvent):void
+			{
+				mps.mediaPlayer.seek(( track.mouseX / 780) * mps.mediaPlayer.duration );
+			}
+			private function onCurrentTimeChange(event:TimeEvent):void
+			{
+				var perc:Number = event.time / mps.mediaPlayer.duration;
+				progress.scaleX = perc;
+			}
+			private function stop_mps():void
+			{
+				mps.mediaPlayer.pause();
+			}
+			private function play_mps():void
+			{
+				mps.mediaPlayer.play();
+			}
+			public function move_Left():void
+			{
+				trace("move_Left",mps);
+				Tweener.addTween( mps, {x:-500, time:5});
+//				Tweener.addTween( tweener_mps, {x:-100, time:3});
+			}
+			public function move_Right():void
+			{
+				trace("move_Right",mps);
+				Tweener.addTween( mps, {x:500, time:5});
+//				Tweener.addTween( tweener_mps, {x:300, time:3});
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup>
+		<s:SpriteVisualElement id="mpscontainer"/>
+		<s:Button id="play" label="PlayMe" click="play_mps()"/>
+		<s:Button id="stop" label="StopMe" click="stop_mps()"/>
+		<s:Button id="moveLeft" label="moveLeft" click="move_Left()"/>
+		<s:Button id="moveRight" label="moveRight" click="move_Right()"/>
+	</s:VGroup>
+</s:Application>
